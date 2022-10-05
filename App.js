@@ -1,13 +1,6 @@
-import React from 'react';
-import {
-  Alert,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {Text, View} from 'react-native';
+import {Input, Button, Dialog} from 'react-native-elements';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
@@ -35,153 +28,164 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const App = () => {
+  const [isAlert, setAlert] = useState('');
+  const [visible, setVisible] = useState(false);
+
+  const toggleDialog = values => {
+    if (!visible) {
+      setAlert(values);
+    }
+    setVisible(!visible);
+  };
+
   return (
-    <Formik
-      initialValues={{
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        mobile: '',
-      }}
-      validationSchema={RegisterSchema}
-      onSubmit={values => Alert.alert(JSON.stringify(values))}>
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        setFieldTouched,
-        isValid,
-        handleSubmit,
-      }) => (
-        <View style={styles.wrapper}>
-          <StatusBar barStyle="light-content" />
-          <View style={styles.formContainer}>
-            <Text style={styles.title}>Registrate</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputStyle}
-                placeholder="Nombre"
-                value={values.name}
-                onChangeText={handleChange('name')}
-                onBlur={() => setFieldTouched('name')}
-              />
-              {errors.name && touched.name ? (
-                <Text style={styles.errorTxt}>{errors.name}</Text>
-              ) : null}
+    <>
+      <Formik
+        initialValues={{
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          mobile: '',
+        }}
+        validationSchema={RegisterSchema}
+        onSubmit={(values, {resetForm}) => {
+          toggleDialog(values);
+          resetForm({values: ''});
+        }}>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          setFieldTouched,
+          isValid,
+          handleSubmit,
+        }) => (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
+              backgroundColor: '#3e609d',
+            }}>
+            <View
+              style={{
+                padding: 20,
+                width: '100%',
+                backgroundColor: '#ffffff',
+                borderRadius: 20,
+              }}>
+              <Text
+                style={{
+                  fontSize: 26,
+                  fontWeight: '500',
+                  marginBottom: 15,
+                  textAlign: 'center',
+                }}>
+                Registrate
+              </Text>
+              <View>
+                <Input
+                  placeholder="Nombre"
+                  value={values.name}
+                  inputStyle={{
+                    fontSize: 17,
+                  }}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.name && touched.name ? (
+                      <Text>{errors.name}</Text>
+                    ) : null
+                  }
+                  onChangeText={handleChange('name')}
+                  onBlur={() => setFieldTouched('name')}
+                />
+                <Input
+                  placeholder="Email"
+                  autoCapitalize={false}
+                  value={values.email}
+                  style={{
+                    fontSize: 17,
+                  }}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.email && touched.email ? (
+                      <Text>{errors.email}</Text>
+                    ) : null
+                  }
+                  onChangeText={handleChange('email')}
+                  onBlur={() => setFieldTouched('email')}
+                />
+                <Input
+                  placeholder="Contraseña"
+                  secureTextEntry={true}
+                  value={values.password}
+                  style={{
+                    fontSize: 17,
+                  }}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.password && touched.password ? (
+                      <Text>{errors.password}</Text>
+                    ) : null
+                  }
+                  onChangeText={handleChange('password')}
+                  onBlur={() => setFieldTouched('password')}
+                />
+                <Input
+                  placeholder="Contraseña confirma"
+                  secureTextEntry={true}
+                  value={values.confirmPassword}
+                  style={{
+                    fontSize: 17,
+                  }}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.confirmPassword && touched.confirmPassword ? (
+                      <Text>{errors.confirmPassword}</Text>
+                    ) : null
+                  }
+                  onChangeText={handleChange('confirmPassword')}
+                  onBlur={() => setFieldTouched('confirmPassword')}
+                />
+                <Input
+                  placeholder="Celular"
+                  keyboardType="phone-pad"
+                  value={values.mobile}
+                  style={{
+                    fontSize: 17,
+                  }}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.mobile && touched.mobile ? (
+                      <Text>{errors.mobile}</Text>
+                    ) : null
+                  }
+                  onChangeText={handleChange('mobile')}
+                  onBlur={() => setFieldTouched('mobile')}
+                />
+              </View>
+              <View style={{marginTop: 25}}>
+                <Button
+                  disabled={!isValid}
+                  buttonType="outline"
+                  onPress={handleSubmit}
+                  title="Enviar"
+                  buttonColor="#039BE5"
+                />
+              </View>
             </View>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputStyle}
-                placeholder="Email"
-                autoCapitalize={false}
-                value={values.email}
-                onChangeText={handleChange('email')}
-                onBlur={() => setFieldTouched('email')}
-              />
-              {errors.email && touched.email ? (
-                <Text style={styles.errorTxt}>{errors.email}</Text>
-              ) : null}
-            </View>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputStyle}
-                placeholder="Contraseña"
-                autoCapitalize={false}
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={() => setFieldTouched('password')}
-              />
-              {errors.password && touched.password ? (
-                <Text style={styles.errorTxt}>{errors.password}</Text>
-              ) : null}
-            </View>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputStyle}
-                placeholder="Contraseña confirma"
-                value={values.confirmPassword}
-                onChangeText={handleChange('confirmPassword')}
-                onBlur={() => setFieldTouched('confirmPassword')}
-              />
-              {errors.confirmPassword && touched.confirmPassword ? (
-                <Text style={styles.errorTxt}>{errors.confirmPassword}</Text>
-              ) : null}
-            </View>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputStyle}
-                placeholder="Celular"
-                keyboardType="phone-pad"
-                value={values.mobile}
-                onChangeText={handleChange('mobile')}
-                onBlur={() => setFieldTouched('mobile')}
-              />
-              {errors.mobile && touched.mobile ? (
-                <Text style={styles.errorTxt}>{errors.mobile}</Text>
-              ) : null}
-            </View>
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={!isValid}
-              style={[
-                styles.submitBtn,
-                {backgroundColor: isValid ? '#395B64' : '#A5C9CA'},
-              ]}>
-              <Text style={styles.submitBtnText}>Enviar</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      )}
-    </Formik>
+        )}
+      </Formik>
+      <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+        <Dialog.Title title="Información" />
+        <Text>{JSON.stringify(isAlert)}</Text>
+      </Dialog>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#2C3333',
-    paddingHorizontal: 15,
-  },
-  formContainer: {
-    backgroundColor: '#F5EDDC',
-    padding: 20,
-    borderRadius: 20,
-    width: '100%',
-  },
-  title: {
-    color: '#16213E',
-    fontSize: 26,
-    fontWeight: '400',
-    marginBottom: 15,
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-  inputStyle: {
-    borderColor: '#16213E',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-  },
-  errorTxt: {
-    fontSize: 12,
-    color: '#FF0D10',
-  },
-  submitBtn: {
-    padding: 10,
-    borderRadius: 15,
-    justifyContent: 'center',
-  },
-  submitBtnText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-});
 
 export default App;
